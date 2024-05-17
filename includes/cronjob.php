@@ -7,7 +7,7 @@ $expiry_threshold = time() - (48 * 60 * 60);
 // shortlinks_viewed tábla törlése
 $sql = "DELETE FROM `shortlinks_viewed` WHERE `timestamp` < $expiry_threshold";
 if ($mysqli->query($sql) === TRUE) {
-    echo "Records deleted successfully from shortlinks_viewed\n";
+    echo "Records deleted successfully from shortlinks_viewed\n<br>";
 } else {
     echo "Error deleting records from shortlinks_viewed: " . $mysqli->error . "\n";
 }
@@ -15,7 +15,7 @@ if ($mysqli->query($sql) === TRUE) {
 // transactions tábla törlése
 $sql = "DELETE FROM `transactions` WHERE `timestamp` < $expiry_threshold";
 if ($mysqli->query($sql) === TRUE) {
-    echo "Records deleted successfully from transactions\n";
+    echo "Records deleted successfully from transactions\n<br>";
 } else {
     echo "Error deleting records from transactions: " . $mysqli->error . "\n";
 }
@@ -23,7 +23,7 @@ if ($mysqli->query($sql) === TRUE) {
 // achievement_history tábla törlése
 $sql = "DELETE FROM `achievement_history` WHERE `claim_time` < $expiry_threshold";
 if ($mysqli->query($sql) === TRUE) {
-    echo "Records deleted successfully from achievement_history\n";
+    echo "Records deleted successfully from achievement_history\n<br>";
 } else {
     echo "Error deleting records from achievement_history: " . $mysqli->error . "\n";
 }
@@ -33,7 +33,7 @@ $sql = "DELETE FROM `bonus_history` WHERE `bonus_date` < DATE_SUB(CURDATE(), INT
 if ($mysqli->query($sql) === TRUE) {
     echo "Records deleted successfully from bonus_history\n";
 } else {
-    echo "Error deleting records from bonus_history: " . $mysqli->error . "\n";
+    echo "Error deleting records from bonus_history: " . $mysqli->error . "\n<br>";
 }
 
 // Kapcsolat lezárása
