@@ -62,6 +62,8 @@ INSERT INTO `settings` (`id`, `name`, `value`) VALUES
 (5, 'timer', '1'),
 (6, 'min_reward', '50000'),
 (7, 'max_reward', '75000'),
+(8, 'zerochain_api', ''),
+(9, 'zerochain_privatekey', ''),
 (11, 'claim_enabled', 'yes'),
 (14, 'vpn_shield', 'no'),
 (15, 'referral_percent', '0'),
