@@ -114,6 +114,9 @@ if (!isset($_SESSION['admin_username'])) {
                 <li class="nav-item <?php echo ($page == 'faucet') ? 'active' : ''; ?>">
                     <a class="nav-link" href="admin.php?page=faucet">Faucet settings</a>
                 </li>
+                <li class="nav-item <?php echo ($page == 'duplicate_check') ? 'active' : ''; ?>">
+                    <a class="nav-link" href="admin.php?page=duplicate_check">Check Duplicates</a>
+                </li>
 				<li class="nav-item <?php echo ($page == 'logout') ? '' : ''; ?>">
                     <a class="nav-link" href="admin.php?page=logout">Logout</a>
                 </li>
@@ -315,6 +318,96 @@ $getMinWithdrawalGateway = $mysqli->query("SELECT value FROM settings WHERE name
     
 <?php
             break;
+        case 'duplicate_check':
+           
+        // Banned address hozzáadása
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ban_ip_address'])) {
+            $banIpAddress = $mysqli->real_escape_string($_POST['ban_ip_address']);
+        
+            // Lekérdezés az IP-címhez tartozó összes felhasználói cím lekérdezéséhez
+            $getAddressSQL = "SELECT address FROM users WHERE ip_address = '$banIpAddress'";
+            $addressResult = $mysqli->query($getAddressSQL);
+        
+            $banMessages = [];
+            if ($addressResult->num_rows > 0) {
+                while ($addressRow = $addressResult->fetch_assoc()) {
+                    $banAddress = $addressRow['address'];
+                    $checkBanSQL = "SELECT * FROM banned_address WHERE address = '$banAddress' LIMIT 1";
+                    $banResult = $mysqli->query($checkBanSQL);
+        
+                    if ($banResult->num_rows == 0) {
+                        $insertBanSQL = "INSERT INTO banned_address (address) VALUES ('$banAddress')";
+                        if ($mysqli->query($insertBanSQL) === TRUE) {
+                            $banMessages[] = "Address $banAddress successfully banned.";
+                        } else {
+                            $banMessages[] = "Error banning address $banAddress: " . $mysqli->error;
+                        }
+                    } else {
+                        $banMessages[] = "Address $banAddress is already banned.";
+                    }
+                }
+            }
+        }
+        
+        ?>
+        
+     
+        <div class="container mt-5">
+            <h1>Check Duplicate Registrations</h1>
+            <?php
+
+if (isset($banMessages)) {
+    foreach ($banMessages as $banMessage) {
+        echo '<div class="alert alert-success">' . $banMessage . '</div>';
+    }
+}
+
+            $duplicateSQL = "SELECT ip_address, COUNT(*) as count FROM users GROUP BY ip_address HAVING count > 1";
+            $duplicateResult = $mysqli->query($duplicateSQL);
+        
+            if ($duplicateResult->num_rows > 0) {
+                echo '<table class="table table-bordered">';
+                echo '<thead><tr><th>IP Address</th><th>Count</th><th>Users</th><th>Action</th></tr></thead><tbody>';
+                while($row = $duplicateResult->fetch_assoc()) {
+                    $ipAddress = $row['ip_address'];
+                    $userSQL = "SELECT id, address FROM users WHERE ip_address = '$ipAddress'";
+                    $userResult = $mysqli->query($userSQL);
+                    $users = '';
+                    while ($userRow = $userResult->fetch_assoc()) {
+                        $userAddress = $userRow['address'];
+                        $checkBanSQL = "SELECT * FROM banned_address WHERE address = '$userAddress' LIMIT 1";
+                        $banResult = $mysqli->query($checkBanSQL);
+        
+                        if ($banResult->num_rows > 0) {
+                            $users .= 'ID: ' . $userRow['id'] . ', Address: ' . $userAddress . ' <span style="color: red;">BANNED</span><br>';
+                        } else {
+                            $users .= 'ID: ' . $userRow['id'] . ', Address: ' . $userAddress . '<br>';
+                        }
+                    }
+                    echo '<tr>';
+                    echo '<td>' . $row['ip_address'] . '</td>';
+                    echo '<td>' . $row['count'] . '</td>';
+                    echo '<td>' . $users . '</td>';
+                    echo '<td>';
+                    echo '<form method="post" action="">';
+                    echo '<input type="hidden" name="ban_ip_address" value="' . $row['ip_address'] . '">';
+                    echo '<button type="submit" class="btn btn-danger">Ban All</button>';
+                    echo '</form>';
+                    echo '</td>';
+                    echo '</tr>';
+                }
+                echo '</tbody></table>';
+            } else {
+                echo '<div class="alert alert-info">No duplicate registrations found.</div>';
+            }
+        
+            
+            ?>
+        </div>
+
+<?php
+        
+           break;
         case 'logout':
 				 // Munkamenet törlése a felhasználó kijelentkeztetésekor
 				session_unset();

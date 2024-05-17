@@ -6,13 +6,21 @@ $faucetName = $mysqli->query("SELECT * FROM settings WHERE id = '1'")->fetch_ass
 $ip = $_SERVER['REMOTE_ADDR'];
 $timestamp = time();
 $Address = '';
+$alertForm = '';
+
+function isEmailBanned($email, $mysqli) {
+    $email = $mysqli->real_escape_string(strtolower($email));
+    $result = $mysqli->query("SELECT COUNT(id) FROM banned_address WHERE address = '$email'")->fetch_row()[0];
+    return $result > 0;
+}
 
 if ($_POST['address']) {
     $Address = $mysqli->real_escape_string(trim($_POST['address']));
 
-
-   
-       
+// Ellenőrizd, hogy a cím szerepel-e a banned_address táblában
+if (isEmailBanned($Address, $mysqli)) {
+    $alertForm = alert("danger", "Your account is banned.");
+} else {
             $referID = 0; 
 
             if (isset($_COOKIE['refer']) && is_numeric($_COOKIE['refer'])) {
