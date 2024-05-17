@@ -33,11 +33,11 @@ if($user){
             include 'templates/dashboard.php';
             break;
         case 'faucet':
-            $pageTitle = 'Faucet';
+            $pageTitle = 'Faucet step 1';
             include 'templates/faucet.php';
             break;
         case 'verify':
-            $pageTitle = 'Faucet verify';
+            $pageTitle = 'Faucet step 2';
             include 'templates/verify.php';
             break;
         case 'withdraw':
