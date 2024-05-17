@@ -133,16 +133,6 @@ CREATE TABLE `bonus_history` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-CREATE TABLE `bonus_settings` (
-  `id` int(32) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `bonus_amount` decimal(10,6) DEFAULT 0.000000,
-  `xp_reward` int(32) DEFAULT 0,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-INSERT INTO `bonus_settings` (`id`, `bonus_amount`, `xp_reward`) VALUES
-(1, '0.00100', 10);
-
 CREATE TABLE IF NOT EXISTS `referralearn` (
 `id` int(32) UNSIGNED NOT NULL AUTO_INCREMENT,
   `userid` int(32) NOT NULL,
