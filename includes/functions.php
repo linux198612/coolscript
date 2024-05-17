@@ -79,79 +79,8 @@ function findTimeAgo($past) {
 }
 
 
-function faucetInfo($mysqli){
-	$jsonArray = array();
-
-	$jsonArray['api_version'] = 1;
-	$jsonArray['script'] = 1;
-	$jsonArray['site_name'] = $mysqli->query("SELECT value FROM settings WHERE id = '1'")->fetch_assoc()['value'];
-	$jsonArray['site_url'] = $Website_Url;
-	$jsonArray['rewards']['minimum'] = $mysqli->query("SELECT value FROM settings WHERE id = '6'")->fetch_assoc()['value'];
-	$jsonArray['rewards']['maximum'] = $mysqli->query("SELECT value FROM settings WHERE id = '7'")->fetch_assoc()['value'];
-	$jsonArray['timer'] = $mysqli->query("SELECT value FROM settings WHERE id = '5'")->fetch_assoc()['value'];
-
-
-	$claimAvail1 = $mysqli->query("SELECT value FROM settings WHERE id = '11'")->fetch_assoc()['value'];
-	if($claimAvail1 == "yes")
-		$jsonArray['claim_available'][0] = true;
-	else
-		$jsonArray['claim_available'][0] = false;
-
-	$claimAvail2 = $mysqli->query("SELECT COUNT(id) FROM transactions WHERE type = 'Withdraw'")->fetch_row()[0];
-	if($claimAvail2 >= 1)
-		$jsonArray['claim_available'][1] = true;
-	else
-		$jsonArray['claim_available'][1] = false;
-
-
-	$jsonArray['referral_commission'] = $mysqli->query("SELECT value FROM settings WHERE id = '15'")->fetch_assoc()['value'];
-
-	$expressCryptoApiToken = $mysqli->query("SELECT value FROM settings WHERE id = '10'")->fetch_assoc()['value'];
-	$expressCryptoUserToken = $mysqli->query("SELECT value FROM settings WHERE id = '18'")->fetch_assoc()['value'];
-	$faucetpayApiToken = $mysqli->query("SELECT value FROM settings WHERE id = '19'")->fetch_assoc()['value'];
-	$blockioApiKey = $mysqli->query("SELECT value FROM settings WHERE id = '20'")->fetch_assoc()['value'];
-	$blockioPin = $mysqli->query("SELECT value FROM settings WHERE id = '21'")->fetch_assoc()['value'];
-
-	if($expressCryptoApiToken AND $expressCryptoUserToken)
-		$availableWithdrawalMethods .= "ec,";
-
-	if($faucetpayApiToken)
-		$availableWithdrawalMethods .= "fp,";
-
-	if($blockioApiKey AND $blockioPin)
-		$availableWithdrawalMethods .= "direct,";
-
-	$jsonArray['withdrawal_methods'] = rtrim($availableWithdrawalMethods, ",");
-
-	header('Content-Type: application/json');
-	echo json_encode($jsonArray, JSON_PRETTY_PRINT);
-	exit;
-}
-
 function CaptchaCheck($selectedCaptcha, $captchaData, $mysqli){
-	if($selectedCaptcha == 1){
-		$reCaptcha_privKey = $mysqli->query("SELECT * FROM settings WHERE id = '8' LIMIT 1")->fetch_assoc()['value'];
-		if(!$reCaptcha_privKey){
-			return false;
-		} else {
-			$recaptcha = new \ReCaptcha\ReCaptcha($reCaptcha_privKey);
-
-			$respCaptcha = $recaptcha->verify($captchaData['g-recaptcha-response']);
-			return $respCaptcha->isSuccess();
-		}
-	} else if($selectedCaptcha == 2){
-		$sovleMediaVerificationKey = $mysqli->query("SELECT * FROM settings WHERE id = '3' LIMIT 1")->fetch_assoc()['value'];
-		$sovleMediaAuthKey = $mysqli->query("SELECT * FROM settings WHERE id = '4' LIMIT 1")->fetch_assoc()['value'];
-		if(!$sovleMediaVerificationKey AND !$sovleMediaAuthKey){
-			return false;
-		} else {
-			$solvemedia_response = solvemedia_check_answer($sovleMediaVerificationKey, $_SERVER["REMOTE_ADDR"], $captchaData["adcopy_challenge"], $captchaData["adcopy_response"], $sovleMediaAuthKey);
-			if(!$solvemedia_response->is_valid)
-				return false;
-			else 
-				return true;
-		}
-	} else if($selectedCaptcha == 3){
+		if($selectedCaptcha == 3){
 		$hCaptchaPrivKey = $mysqli->query("SELECT * FROM settings WHERE name = 'hcaptcha_sec_key' LIMIT 1")->fetch_assoc()['value'];
 
 		$data = array(

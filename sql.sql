@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 
 INSERT INTO `settings` (`id`, `name`, `value`) VALUES
 (1, 'faucet_name', 'Zero Faucet Script'),
+(2, 'maintenance', 'off'),
 (5, 'timer', '1'),
 (6, 'min_reward', '50000'),
 (7, 'max_reward', '75000'),

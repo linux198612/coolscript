@@ -38,7 +38,7 @@ setcookie("refer", $refer, time() + (3600 * 24));
 
 // Cloudflare IP
 
-$reverseProxy = $mysqli->query("SELECT * FROM settings WHERE id = '16'")->fetch_assoc()['value'];
+$reverseProxy = $mysqli->query("SELECT value FROM settings WHERE name = 'reverse_proxy'")->fetch_assoc()['value'];
 
 if($reverseProxy == "yes"){
 	// check whether IP is Cloudflare
@@ -96,11 +96,8 @@ function updateUserLevelAndXP($userId, $xpThreshold, $maxLevel) {
         $newLevel = $maxLevel;
     }
 
-    // Calculate the new lvlreward
-    $newLvlReward = 1 + ($newLevel) * 0.01;
-
     // Update the user's level, XP, and lvlreward
-    $mysqli->query("UPDATE users SET level = '$newLevel', xp = '$currentXP', lvlreward = '$newLvlReward' WHERE id = '$userId'");
+    $mysqli->query("UPDATE users SET level = '$newLevel', xp = '$currentXP' WHERE id = '$userId'");
 
     return true; // User's level and XP updated
 }

@@ -4,6 +4,24 @@ include("includes/core.php");
 //   error_reporting(E_ALL);
 //   ini_set('display_errors', '1');
 
+$maintenance = $mysqli->query("SELECT value FROM settings WHERE name = 'maintenance' LIMIT 1")->fetch_assoc()['value'];
+
+if ($maintenance === 'on') {
+    $page = isset($_GET['page']) ? $_GET['page'] : 'maintenance';
+
+
+    switch ($page) {
+        case 'maintenance':
+            $pageTitle = 'Maintenance';
+            include 'templates/maintenance.php';
+            break;
+        default:
+            $pageTitle = 'Maintenance';
+            include 'templates/maintenance.php';
+            break;
+    }
+} else {
+
 if($user){
     // A felhasználó be van jelentkezve, így megjelenítjük a dashboard-ot vagy a másik oldalt
     $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
@@ -65,6 +83,8 @@ if($user){
             include 'templates/home.php';
             break;
     }
+
+}
 
 }
 ?>
