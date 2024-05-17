@@ -216,6 +216,3 @@ if ($result) {
                     </ol>
                 </nav>
                 <section>
-<div class="text-center">
-
-</div>
