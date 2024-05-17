@@ -65,13 +65,14 @@ INSERT INTO `settings` (`id`, `name`, `value`) VALUES
 (14, 'vpn_shield', 'no'),
 (15, 'referral_percent', '0'),
 (16, 'reverse_proxy', 'no'),
+(17, 'bonus_reward_coin', '0.01'),
+(18, 'bonus_reward_xp', '10'),
+(19, 'bonus_faucet_require', '10'),
 (22, 'iphub_api_key', ''),
 (23, 'min_withdrawal_gateway', '1000000'),
 (26, 'hcaptcha_pub_key', ''),
 (27, 'hcaptcha_sec_key', ''), 
 (28, 'faucet_currency', 'Zerocoin');
-
-
 
 CREATE TABLE IF NOT EXISTS `transactions` (
 `id` int(32) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -90,12 +91,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   `joined` int(32) NOT NULL,
   `level` int(32) DEFAULT 0,
   `xp` int(32) DEFAULT 0,
-  `lvlreward` decimal(10,2) DEFAULT 1.00,
   `last_activity` int(32) NOT NULL,
   `referred_by` int(32) NOT NULL,
   `last_claim` int(32) NOT NULL,
-  `claim_cryptokey` varchar(75) NOT NULL,
-  `last_autoclaim` int(32) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 

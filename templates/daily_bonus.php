@@ -4,6 +4,9 @@ include("header.php");
 // hCaptcha kulcsok lekérése az adatbázisból
 $hCaptchaPrivKey = $mysqli->query("SELECT * FROM settings WHERE name = 'hcaptcha_sec_key' LIMIT 1")->fetch_assoc()['value'];
 $hCaptchaPubKey = $mysqli->query("SELECT * FROM settings WHERE name = 'hcaptcha_pub_key'")->fetch_assoc()['value'];
+$bonusAmount = $mysqli->query("SELECT * FROM settings WHERE name = 'bonus_reward_coin'")->fetch_assoc()['value'];
+$xpReward = $mysqli->query("SELECT * FROM settings WHERE name = 'bonus_reward_xp'")->fetch_assoc()['value'];
+$bonus_faucet_require = $mysqli->query("SELECT * FROM settings WHERE name = 'bonus_faucet_require'")->fetch_assoc()['value'];
 ?>
 
 <div class="text-center">
@@ -27,24 +30,15 @@ $hCaptchaPubKey = $mysqli->query("SELECT * FROM settings WHERE name = 'hcaptcha_
     $faucetQuery = $mysqli->query("SELECT COUNT(*) as faucet_count FROM transactions WHERE userid = '{$user['id']}' AND type = 'Faucet' AND DATE(FROM_UNIXTIME(timestamp)) = '{$currentDate}'");
     $faucetData = $faucetQuery->fetch_assoc();
     $faucetCount = intval($faucetData['faucet_count']);
-    $canClaimBonus = $faucetCount >= 5;
+    $canClaimBonus = $faucetCount >= $bonus_faucet_require;
 
     echo "<h3>Claim Daily Bonus</h3>";
 
     if (!$userHasClaimedBonus && $canClaimBonus) {
-        $firstBonusQuery = $mysqli->query("SELECT * FROM bonus_settings WHERE id = 1"); // Az első bónusz ID-je 1-nek feltételezve
-        $firstBonus = $firstBonusQuery->fetch_assoc();
 
-        $bonusId = $firstBonus['id'];
-        $bonusName = $firstBonus['bonus_name'];
-        $bonusAmount = floatval($firstBonus['bonus_amount']);
-        $xpReward = intval($firstBonus['xp_reward']);
-
-        echo "<p>{$bonusName}</p>";
         echo "<p>Reward: {$bonusAmount} ZER, {$xpReward} XP</p>";
 
         echo "<form method='post'>";
-        echo "<input type='hidden' name='selected_bonus' value='{$bonusId}'>";
         echo "<div class='h-captcha' data-sitekey='{$hCaptchaPubKey}'></div>";
         echo "<button type='submit' class='btn btn-primary' name='claim_bonus'>Claim Bonus</button>";
         echo "</form>";
