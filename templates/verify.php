@@ -3,7 +3,7 @@
 include("header.php");
 
 ?>
-<div class="text-center"><h1>Faucet -> STEP 2</h1></div>
+
 
 <div class="text-center">
 <!-- Advertise here  -->

@@ -2,10 +2,6 @@
 
 include("header.php");
 
-
-
-
-
     echo "<table class='table table-striped'>
                     <thead>
                         <tr>

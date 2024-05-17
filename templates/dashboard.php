@@ -1,11 +1,7 @@
 <?php
 include("header.php");
 
-
-
-    echo "<h1>Dashboard</h1><br>";
-
-    ?>
+?>
 
 <div class="text-center">
 <!-- Advertise here  -->

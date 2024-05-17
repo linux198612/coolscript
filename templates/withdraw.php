@@ -3,8 +3,6 @@
 include("header.php");
 
 
-echo "<h1>Withdraw</h1>";
-
 ?>
 <div class="text-center">
 
