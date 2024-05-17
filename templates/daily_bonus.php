@@ -44,7 +44,7 @@ $bonus_faucet_require = $mysqli->query("SELECT * FROM settings WHERE name = 'bon
         echo "</form>";
     } elseif (!$userHasClaimedBonus) {
         // Nem teljesült az 5 Faucet tranzakció feltétel
-        echo "<div class='alert alert-warning'>You need to complete at least 5 Faucet transactions to claim the daily bonus.</div>";
+        echo "<div class='alert alert-warning'>You need to complete at least ".$bonus_faucet_require." Faucet transactions to claim the daily bonus.</div>";
     } else {
         // A felhasználó már ma begyűjtötte a bónuszt
         echo "<div class='alert alert-success'>You have successfully collected the bonus today. <br>Come back tomorrow for the next bonus.</div>";

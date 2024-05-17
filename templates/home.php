@@ -37,7 +37,7 @@ if ($_POST['address']) {
                     header("Location: index.php?page=dashboard");
                     exit;
                 } else {
-                    $mysqli->query("INSERT INTO users (address, ip_address, balance, joined, last_activity, referred_by, last_claim, claim_cryptokey) VALUES ('$Address', '$ip', '0', '$timestamp', '$timestamp', '$referID', '0', '')");
+                    $mysqli->query("INSERT INTO users (address, ip_address, balance, joined, last_activity, referred_by, last_claim) VALUES ('$Address', '$ip', '0', '$timestamp', '$timestamp', '$referID', '0')");
                     $_SESSION['address'] = $mysqli->insert_id;
         
                     // Átirányítás a dashboard.php oldalra
