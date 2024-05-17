@@ -4,14 +4,14 @@ include("header.php");
 
 ?>
 <div class="text-center"><h1>Faucet -> STEP 2</h1></div>
-<!-- Felső banner hely -->
-<div class="text-center">
 
+<div class="text-center">
+<!-- Advertise here  -->
 </div><br>
 
 <div class="row">
     <div class="col-md-3 text-center">
-
+<!-- Advertise here  -->
     </div>
     <div class="col-md-6 text-center">
         <?php
@@ -81,13 +81,13 @@ include("header.php");
 ?>
 </div><br><br>
 <div class="col-md-3  text-center">
-
+<!-- Advertise here  -->
 </div>
 </div>
 
 
 <div class="text-center">
-
+<!-- Advertise here  -->
 </div>
 
 <?php

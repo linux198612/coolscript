@@ -1,11 +1,11 @@
 <?php
-ini_set('session.gc_maxlifetime', 600);
+ini_set('session.gc_maxlifetime', 1800);
 
 // Session indítása
 session_start();
 
 // Ellenőrizzük a session időtúllépését
-if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 600)) {
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 1800)) {
     // A session lejárt, itt kijelentkeztetheted a felhasználót vagy más tevékenységeket végezhetsz
     // Például kijelentkeztetés és/vagy átirányítás
     session_unset();
