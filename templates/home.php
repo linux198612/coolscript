@@ -209,7 +209,7 @@ if ($_POST['address']) {
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="col-md-4">
+                    <div class="col-md-4">
                         <div class="card small-card">
                             <div class="card-body text-center">
                                 <h5 class="card-title">Achievements</h5>
@@ -217,14 +217,6 @@ if ($_POST['address']) {
                             </div>
                         </div>
                     </div>
-                     <div class="col-md-4">
-                        <div class="card small-card">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">PTP (Paid-to-Promote)</h5>
-                                <p class="card-text">Promote our site and earn USDT.</p>
-                            </div>
-                        </div>
-                    </div> -->
                 </div>
         </div>
     </div>
