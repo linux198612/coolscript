@@ -66,7 +66,7 @@ include("header.php");
 					$nextClaim2 = time() - ($timer);
 					$IpCheck = $mysqli->query("SELECT COUNT(id) FROM users WHERE ip_address = '$realIpAddressUser' AND last_claim >= '$nextClaim2'")->fetch_row()[0];
 					if($IpCheck >= 1){
-						$content .= alert("danger", "Someone else claimed in your network already.");
+						echo alert("danger", "Someone else claimed in your network already.");
 					} else {
 							echo "<h1>3. Your Claim</h1>";
 
