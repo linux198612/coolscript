@@ -1,15 +1,4 @@
 <?php
-include("header.php");
-
-?>
-<!-- Felső banner hely -->
-<div class="text-center">
-
-</div><br>
-
-<div class="row">
-    <div class="col-md-12 text-center">
-        <?php
 
 function generateKey(){
 	$letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -105,7 +94,18 @@ function generateShortlink($pUrl){
 			$alertSL = alert("danger", "Invalid Shortlink key.");
 		}
 	}
+	
+	include("header.php");
 
+	?>
+	<!-- Felső banner hely -->
+	<div class="text-center">
+	
+	</div><br>
+	
+	<div class="row">
+		<div class="col-md-12 text-center">
+			<?php
 	$availableShortlinks = $mysqli->query("SELECT * FROM shortlinks_list AS sllist WHERE limit_view > (SELECT COUNT(id) FROM shortlinks_viewed AS viewed WHERE (userid = '{$user['id']}' OR ip_address = '$userIPAddy') AND timestamp_expiry > UNIX_TIMESTAMP(NOW()) AND viewed.slid = sllist.id) Order By reward DESC");
 
 	if ($availableShortlinks->num_rows >= 1) {
