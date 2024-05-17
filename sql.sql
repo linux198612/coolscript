@@ -144,6 +144,23 @@ CREATE TABLE IF NOT EXISTS `referralearn` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS `coupons` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(20) NOT NULL,
+    reward DECIMAL(10, 2) NOT NULL,
+    date DATE NOT NULL,
+    limit_per_day INT NOT NULL,
+    UNIQUE KEY unique_code (code)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS `redeemed_coupons` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    coupon_id INT NOT NULL,
+    date DATE NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (coupon_id) REFERENCES coupons(id),
+    UNIQUE KEY unique_redemption (user_id, coupon_id, date)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 

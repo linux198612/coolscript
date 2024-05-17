@@ -56,6 +56,10 @@ if($user){
             $pageTitle = 'Daily bonus';
             include 'templates/daily_bonus.php';
             break;
+        case 'coupon':
+            $pageTitle = 'Coupon Code';
+            include 'templates/coupon.php';
+            break;
         case 'shortlink':
             $pageTitle = 'Shortlinks';
             include 'templates/shortlink.php';
