@@ -1,7 +1,29 @@
 <?php
 
-include("header.php");
 
+
+
+        // Jutalom jóváírása
+        if (isset($_POST['claim_button'])) {
+            $claimedReward = floatval($_POST['claim_reward']);
+            $achievementId = intval($_POST['achievement_id']);
+    
+            // Ellenőrizzük, hogy a jutalom már claimelve van-e
+            if (!$alreadyClaimed) {
+                // Jutalom jóváírása a felhasználónak
+                $mysqli->query("UPDATE users SET balance = balance + {$claimedReward} WHERE id = '{$user['id']}'");
+                $successMessage = "Claim successful. " . $claimedReward . " ZER";
+                echo '<div id="push-message" style="display: none; position: fixed; top: 50px; right: 40px; z-index: 9999;" class="alert alert-success">' . $successMessage . '</div>';
+                // Az achievement claim rögzítése az achievement_history táblában
+                $timestamp = time();
+                $mysqli->query("INSERT INTO achievement_history (achievement_id, user_id, claim_time, amount) VALUES ('{$achievementId}', '{$user['id']}', '{$timestamp}', '{$claimedReward}')");
+    
+                // Vissza kell frissíteni az oldalt, hogy a változások láthatók legyenek
+                // header("Location: index.php?page=achievements");
+                // exit;
+            }
+        }
+        include("header.php");
     echo "<table class='table table-striped'>
                     <thead>
                         <tr>
@@ -31,7 +53,7 @@ include("header.php");
     
         echo "<tr>
                         <td>{$achievementCondition} {$achievementType}</td>
-                        <td>{$achievementReward} {$faucetCurrencies[$websiteCurrency][1]}</td>
+                        <td>$$achievementReward ZER</td>
                         <td>{$userAchievementCount} / {$achievementCondition}</td>
                         <td>";
     
@@ -60,25 +82,6 @@ include("header.php");
         echo "</td>
                     </tr>";
     
-        // Jutalom jóváírása
-        if (isset($_POST['claim_button'])) {
-            $claimedReward = floatval($_POST['claim_reward']);
-            $achievementId = intval($_POST['achievement_id']);
-    
-            // Ellenőrizzük, hogy a jutalom már claimelve van-e
-            if (!$alreadyClaimed) {
-                // Jutalom jóváírása a felhasználónak
-                $mysqli->query("UPDATE users SET balance = balance + {$claimedReward} WHERE id = '{$user['id']}'");
-    
-                // Az achievement claim rögzítése az achievement_history táblában
-                $timestamp = time();
-                $mysqli->query("INSERT INTO achievement_history (achievement_id, user_id, claim_time, amount) VALUES ('{$achievementId}', '{$user['id']}', '{$timestamp}', '{$claimedReward}')");
-    
-                // Vissza kell frissíteni az oldalt, hogy a változások láthatók legyenek
-                header("Location: index.php?page=achievements");
-                exit;
-            }
-        }
     }
 
     echo "</tbody></table>";
@@ -86,3 +89,13 @@ include("header.php");
 
     include("footer.php");
     ?>
+<script>
+    var pushMessageElement = document.getElementById('push-message');
+    pushMessageElement.style.display = 'block';
+
+// Automatikus eltűnés 5 másodperc után
+setTimeout(function () {
+    pushMessageElement.style.display = 'none';
+}, 5000);
+
+</script>
