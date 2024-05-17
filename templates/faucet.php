@@ -29,9 +29,9 @@ include("header.php");
 	$maxReward = $mysqli->query("SELECT value FROM settings WHERE name = 'max_reward' LIMIT 1")->fetch_assoc()['value'];
 
 	if($minReward != $maxReward){
-		echo alert("success", "<span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span> Rewards: ".$minReward." to ".$maxReward." {$faucetCurrencies[$websiteCurrency][1]} and 1 XP every ".$timer." minutes");
+		echo alert("success", "<span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span> Rewards: ".$minReward." to ".$maxReward." {$faucetCurrencies[$websiteCurrency][1]} and 1 XP every ".$timer." seconds");
 	} else {
-		echo alert("success", "<span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span> Rewards: ".$maxReward." {$faucetCurrencies[$websiteCurrency][1]} and 1 XP every ".$timer." minutes");
+		echo alert("success", "<span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span> Rewards: ".$maxReward." {$faucetCurrencies[$websiteCurrency][1]} and 1 XP every ".$timer." seconds");
 	}
 
 	$nextClaim = $user['last_claim'] + ($timer);
@@ -49,11 +49,8 @@ include("header.php");
                   <br>
 		";
 	} else if($_GET['c'] == "1"){
-		if($_POST['verifykey'] == $user['claim_cryptokey']){
-			$mysqli->query("UPDATE users Set claim_cryptokey = '' WHERE id = '{$user['id']}'");
-
-
-			if(!is_numeric($_POST['selectedCaptcha']))
+			
+		if(!is_numeric($_POST['selectedCaptcha']))
 				exit;
 
 			$captchaCheckVerify = CaptchaCheck($_POST['selectedCaptcha'], $_POST, $mysqli);
@@ -82,7 +79,7 @@ include("header.php");
 
 							$mysqli->query("INSERT INTO transactions (userid, type, amount, timestamp) VALUES ('{$user['id']}', 'Faucet', '$payOutBTC', '$timestamp')");
 							$mysqli->query("UPDATE users Set balance = balance + $payOutBTC, xp = xp + $xpreward, last_claim = '$timestamp' WHERE id = '{$user['id']}'");
-							echo alert("success", "You've claimed successfully ".$payOut." {$faucetCurrencies[$websiteCurrency][1]}.<br />You can claim again in ".$timer." minutes!");
+							echo alert("success", "You've claimed successfully ".$payOut." {$faucetCurrencies[$websiteCurrency][1]}.<br />You can claim again in ".$timer." seconds!");
 
 							$referralPercent = $mysqli->query("SELECT value FROM settings WHERE name = 'referral_percent' LIMIT 1")->fetch_assoc()['value'];
 							$findReferralQuery = $mysqli->query("SELECT referred_by FROM users WHERE id = '{$user['id']}'");
@@ -107,10 +104,6 @@ include("header.php");
 					}
 				}
 			}
-		} else {
-			$mysqli->query("UPDATE users Set claim_cryptokey = '' WHERE id = '{$user['id']}'");
-			echo alert("danger", "Abusing the system is not allowed. <a href='faucet.php'>Try again</a>");
-		}
 	}
 
 	} else {

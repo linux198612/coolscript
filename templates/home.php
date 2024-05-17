@@ -2,9 +2,9 @@
 
 
 $faucetName = $mysqli->query("SELECT * FROM settings WHERE id = '1'")->fetch_assoc()['value'];
-$faucetpayApiToken = $mysqli->query("SELECT value FROM settings WHERE id = '19'")->fetch_assoc()['value'];
-$blockioApiKey = $mysqli->query("SELECT value FROM settings WHERE id = '20'")->fetch_assoc()['value'];
 
+$ip = $_SERVER['REMOTE_ADDR'];
+$timestamp = time();
 $Address = '';
 
 if ($_POST['address']) {
