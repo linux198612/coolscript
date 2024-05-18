@@ -69,15 +69,15 @@ echo '%<br>';
                 $minWith = $minWithdraw/100000000;
                 echo alert("warning", "Withdrawal threshold of ".$minWith." {$faucetCurrencies[$websiteCurrency][1]} hasn't been reached yet.");
             } else {
-                $mysqli->query("UPDATE users Set balance = '0' WHERE id = '{$user['id']}'");
+                    $mysqli->query("UPDATE users Set balance = '0' WHERE id = '{$user['id']}'");
 					
                     $ZC_API_Key = $mysqli->query("SELECT value FROM settings WHERE name = 'zerochain_api' LIMIT 1")->fetch_assoc()['value']; //get your free API Key from Zerochain (https://zerochain.info/api)
-		    $pk = $mysqli->query("SELECT value FROM settings WHERE name = 'zerochain_privatekey' LIMIT 1")->fetch_assoc()['value'];
-                   try {
-						$result = file_get_contents("https://zerochain.info/api/rawtxbuild/".$pk."/".$userAddress."/".$balance."/0/1/".$ZC_API_Key."");
-				   } catch (Exception $e) {
-$mysqli->query("UPDATE users Set balance = '0' WHERE id = '{$user['id']}'");
-}
+		            $pk = $mysqli->query("SELECT value FROM settings WHERE name = 'zerochain_privatekey' LIMIT 1")->fetch_assoc()['value'];
+                   
+					$result = file_get_contents("https://zerochain.info/api/rawtxbuild/".$pk."/".$userAddress."/".$balance."/0/1/".$ZC_API_Key."");
+				   
+
+
 
 $TxID = "";
 if (strpos($result, '"txid":"') !== false) {
