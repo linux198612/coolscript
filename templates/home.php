@@ -16,6 +16,9 @@ function isEmailBanned($email, $mysqli) {
    
        
 	if(isset($_POST['address'])){
+        if(filter_var($_POST['address'], FILTER_VALIDATE_EMAIL)) {
+            $alertForm = alert("danger", "Email addresses are not allowed.");
+        } else {
         if (isEmailBanned($Address, $mysqli)) {
             $alertForm = alert("danger", "Your account is banned.");
         } else {
@@ -30,7 +33,7 @@ function isEmailBanned($email, $mysqli) {
 
 		if($_POST['address']){
 			$Address = $mysqli->real_escape_string(trim($_POST['address']));
-			$addressCheck = (strlen($Address) >= 10 && strlen($Address) <= 80);
+			$addressCheck = (strlen($Address) >= 30 && strlen($Address) <= 80);
 			if(!$addressCheck){
 				$alertForm = alert("danger", "The Zero address doesn't look valid.");
 			} else {
@@ -74,7 +77,7 @@ function isEmailBanned($email, $mysqli) {
 		}
 	}
 }
-
+}
 
 ?>
 
