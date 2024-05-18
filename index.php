@@ -64,6 +64,14 @@ if($user){
             $pageTitle = 'Shortlinks';
             include 'templates/shortlink.php';
             break;
+        case 'offerwalls':
+            $pageTitle = 'Offerwalls';
+            include 'templates/offerwalls.php';
+            break;
+        case 'converter':
+            $pageTitle = 'Converter';
+            include 'templates/converter.php';
+            break;
         case 'logout':
             include 'templates/logout.php';
             break;

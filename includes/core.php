@@ -124,9 +124,36 @@ if ($newXP < $user['xp']) {
 
 $xpreward = 1;
 
+$reward_in_USD_last_check = $mysqli->query("SELECT value FROM settings WHERE name = 'reward_last_check' LIMIT 1")->fetch_assoc()['value'];
+    if (($reward_in_USD_last_check < time() - 3600)) {
+        if ($ch = curl_init()) {
+			$currency_coingecko = $faucetCurrencies[$websiteCurrency][2];
+
+            if (!empty($currency_coingecko)) {
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+                curl_setopt($ch, CURLOPT_URL, 'https://api.coingecko.com/api/v3/coins/' . $currency_coingecko . '?localization=en&sparkline=false');
+                curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:98.0) Gecko/20100101 Firefox/98.0');
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+                $usd_rate_data_json = curl_exec($ch);
+                curl_close($ch);
+                $usd_rate_data = @json_decode($usd_rate_data_json, true);
+                if (isset($usd_rate_data['market_data']['current_price']['usd'])) {
+                    $price = $usd_rate_data['market_data']['current_price']['usd'];
+                    $reward_last_check = time();
+
+                    $mysqli->query("UPDATE settings Set value = '$price' WHERE name = 'currency_value'");
+					$mysqli->query("UPDATE settings Set value = '$reward_last_check' WHERE name = 'reward_last_check'");
+                }
+            }
+		}
+	}
+
 /*
 Site version information:
 */
-$version = "0.004";
+$version = "0.005";
 
 ?>

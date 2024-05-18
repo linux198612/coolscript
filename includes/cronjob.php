@@ -31,9 +31,17 @@ if ($mysqli->query($sql) === TRUE) {
 // bonus_history tábla törlése
 $sql = "DELETE FROM `bonus_history` WHERE `bonus_date` < DATE_SUB(CURDATE(), INTERVAL 2 DAY)";
 if ($mysqli->query($sql) === TRUE) {
-    echo "Records deleted successfully from bonus_history\n";
+    echo "Records deleted successfully from bonus_history\n<br>";
 } else {
-    echo "Error deleting records from bonus_history: " . $mysqli->error . "\n<br>";
+    echo "Error deleting records from bonus_history: " . $mysqli->error . "\n";
+}
+
+// offerwalls_history tábla törlése
+$sql = "DELETE FROM `offerwalls_history` WHERE `timestamp` < $expiry_threshold";
+if ($conn->query($sql) === TRUE) {
+    echo "Records deleted successfully from offerwalls_history\n<br>";
+} else {
+    echo "Error deleting records from offerwalls_history: " . $conn->error . "\n";
 }
 
 // Kapcsolat lezárása

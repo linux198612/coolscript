@@ -7,7 +7,7 @@ include("header.php");
 <!-- Advertise here  -->
 </div>
     <div class="row">
-        <div class="col-md-6">
+    <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
                     <h3>User Level</h3>
@@ -45,7 +45,24 @@ include("header.php");
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Offerwall Balance</h3>
+                </div>
+                <div class="card-body">
+                    <?php
+                    $credits = $user['credits'];
+                        echo "<h2><p>" . $credits . " Credit <br><a href='index.php?page=converter' class='btn btn-primary'>Convert Credit to Zero</a></p></h2>";
+                       
+    
+
+                    ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
                     <h3>Balance</h3>

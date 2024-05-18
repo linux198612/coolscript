@@ -74,7 +74,9 @@ INSERT INTO `settings` (`id`, `name`, `value`) VALUES
 (23, 'min_withdrawal_gateway', '1000000'),
 (26, 'hcaptcha_pub_key', ''),
 (27, 'hcaptcha_sec_key', ''), 
-(28, 'faucet_currency', 'Zerocoin');
+(28, 'faucet_currency', 'Zerocoin'),
+(29, 'currency_value', ''),
+(30, 'reward_last_check', '');
 
 CREATE TABLE IF NOT EXISTS `transactions` (
 `id` int(32) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -96,6 +98,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `last_activity` int(32) NOT NULL,
   `referred_by` int(32) NOT NULL,
   `last_claim` int(32) NOT NULL,
+  `credits` decimal(10,2) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -162,4 +165,13 @@ CREATE TABLE IF NOT EXISTS `redeemed_coupons` (
     UNIQUE KEY unique_redemption (user_id, coupon_id, date)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-
+CREATE TABLE IF NOT EXISTS `offerwalls_history` (
+`id` int(32) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `userid` int(32) NOT NULL,
+  `offerwalls` varchar(50) NOT NULL,
+  `offerwalls_name` varchar(50) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `timestamp` int(32) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
