@@ -3,10 +3,8 @@
 
 $faucetName = $mysqli->query("SELECT * FROM settings WHERE id = '1'")->fetch_assoc()['value'];
 
-$ip = $_SERVER['REMOTE_ADDR'];
-$timestamp = time();
+
 $Address = '';
-$alertForm = '';
 
 function isEmailBanned($email, $mysqli) {
     $email = $mysqli->real_escape_string(strtolower($email));
@@ -14,51 +12,68 @@ function isEmailBanned($email, $mysqli) {
     return $result > 0;
 }
 
-if ($_POST['address']) {
-    $Address = $mysqli->real_escape_string(trim($_POST['address']));
 
-// Ellenőrizd, hogy a cím szerepel-e a banned_address táblában
-if (isEmailBanned($Address, $mysqli)) {
-    $alertForm = alert("danger", "Your account is banned.");
-} else {
-            $referID = 0; 
-
-            if (isset($_COOKIE['refer']) && is_numeric($_COOKIE['refer'])) {
-                $referID2 = $mysqli->real_escape_string($_COOKIE['refer']);
-                $AddressCheck = $mysqli->query("SELECT COUNT(id) FROM users WHERE id = '$referID2'")->fetch_row()[0];
-                if ($AddressCheck == 1) {
-                    $referID = $referID2;
-                }
-            }
-
-         
-                $AddressCheck = $mysqli->query("SELECT COUNT(id) FROM users WHERE LOWER(address) = '" . strtolower($Address) . "' LIMIT 1")->fetch_row()[0];
-                $timestamp = $mysqli->real_escape_string(time());
-                $ip = $mysqli->real_escape_string($realIpAddressUser);
-        
-                if ($AddressCheck == 1) {
-                    $userID = $mysqli->query("SELECT id FROM users WHERE LOWER(address) = '" . strtolower($Address) . "' LIMIT 1")->fetch_assoc()['id'];
-                    $_SESSION['address'] = $userID;
-                    $mysqli->query("UPDATE users Set last_activity = '$timestamp', ip_address = '$ip' WHERE id = '$userID'");
-                    
-                    // Átirányítás a dashboard.php oldalra
-                    header("Location: index.php?page=dashboard");
-                    exit;
-                } else {
-                    $mysqli->query("INSERT INTO users (address, ip_address, balance, joined, last_activity, referred_by, last_claim) VALUES ('$Address', '$ip', '0', '$timestamp', '$timestamp', '$referID', '0')");
-                    $_SESSION['address'] = $mysqli->insert_id;
-        
-                    // Átirányítás a dashboard.php oldalra
-                    header("Location: index.php?page=dashboard");
-                    exit;
-                }
-
-
-    
-} else {
    
-}
+       
+	if(isset($_POST['address'])){
+        if (isEmailBanned($Address, $mysqli)) {
+            $alertForm = alert("danger", "Your account is banned.");
+        } else {
 
+		if(!isset($_POST['token']) || $_POST['token'] !== $_SESSION['token']) {
+		unset($_SESSION['token']);
+		$_SESSION['token'] = md5(md5(uniqid().uniqid().mt_rand()));
+		exit;
+		}
+		unset($_SESSION['token']);
+		$_SESSION['token'] = md5(md5(uniqid().uniqid().mt_rand()));
+
+		if($_POST['address']){
+			$Address = $mysqli->real_escape_string(trim($_POST['address']));
+			$addressCheck = (strlen($Address) >= 10 && strlen($Address) <= 80);
+			if(!$addressCheck){
+				$alertForm = alert("danger", "The Zero address doesn't look valid.");
+			} else {
+				// Check Referral
+				if($_COOKIE['refer']){
+					if(is_numeric($_COOKIE['refer'])){
+						$referID2 = $mysqli->real_escape_string($_COOKIE['refer']);
+						$AddressCheck = $mysqli->query("SELECT COUNT(id) FROM users WHERE id = '$referID2'")->fetch_row()[0];
+						if($AddressCheck == 1){
+							$referID = $referID2;
+						} else {
+							$referID = 0;
+						}
+					} else {
+						$referID = 0;
+					}
+				} else {
+					$referID = 0;
+				}
+
+				$AddressCheck = $mysqli->query("SELECT COUNT(id) FROM users WHERE LOWER(address) = '".strtolower($Address)."' LIMIT 1")->fetch_row()[0];
+				$timestamp = $mysqli->real_escape_string(time());
+				$ip = $mysqli->real_escape_string($realIpAddressUser);
+
+				if($AddressCheck == 1){
+					$userID = $mysqli->query("SELECT id FROM users WHERE LOWER(address) = '".strtolower($Address)."' LIMIT 1")->fetch_assoc()['id'];
+					$_SESSION['address'] = $userID;
+					$mysqli->query("UPDATE users Set last_activity = '$timestamp', ip_address = '$ip' WHERE id = '$userID'");
+                    header("Location: index.php?page=dashboard");
+				} else {
+
+					$mysqli->query("INSERT INTO users (address, ip_address, balance, joined, last_activity, referred_by, last_claim, claim_cryptokey) VALUES ('$Address', '$ip', '0', '$timestamp', '$timestamp', '$referID', '0', '')");
+					$_SESSION['address'] = $mysqli->insert_id;
+				}
+				header("Location: index.php?page=dashboard");
+				exit;
+			}
+		} else {
+			$alertForm = alert("danger", "The Zero address field can't be blank.");
+
+		}
+	}
+}
 
 
 ?>
