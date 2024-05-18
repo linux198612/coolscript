@@ -240,6 +240,30 @@ function isEmailBanned($email, $mysqli) {
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-4">
+                        <div class="card small-card">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Offerwalls</h5>
+                                <p class="card-text">Clicks offerwalls to earn more Zatoshi.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card small-card">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">PTC</h5>
+                                <p class="card-text">View ads and collect Zatoshi.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card small-card">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Coupon Code</h5>
+                                <p class="card-text">Coupon code every day telegram group.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
         </div>
     </div>
