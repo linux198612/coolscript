@@ -6,78 +6,67 @@ $faucetName = $mysqli->query("SELECT * FROM settings WHERE id = '1'")->fetch_ass
 
 $Address = '';
 
-function isEmailBanned($email, $mysqli) {
-    $email = $mysqli->real_escape_string(strtolower($email));
-    $result = $mysqli->query("SELECT COUNT(id) FROM banned_address WHERE address = '$email'")->fetch_row()[0];
-    return $result > 0;
-}
+if(isset($_POST['address'])){
+    if(filter_var($_POST['address'], FILTER_VALIDATE_EMAIL)) {
+        $alertForm = alert("danger", "Email addresses are not allowed.");
+    } else {
+    
 
+    if(!isset($_POST['token']) || $_POST['token'] !== $_SESSION['token']) {
+    unset($_SESSION['token']);
+    $_SESSION['token'] = md5(md5(uniqid().uniqid().mt_rand()));
+    exit;
+    }
+    unset($_SESSION['token']);
+    $_SESSION['token'] = md5(md5(uniqid().uniqid().mt_rand()));
 
-   
-       
-	if(isset($_POST['address'])){
-        if(filter_var($_POST['address'], FILTER_VALIDATE_EMAIL)) {
-            $alertForm = alert("danger", "Email addresses are not allowed.");
+    if($_POST['address']){
+        $Address = $mysqli->real_escape_string(trim($_POST['address']));
+        $addressCheck = (strlen($Address) >= 25 && strlen($Address) <= 80);
+        if(!$addressCheck){
+            $alertForm = alert("danger", "The Zero address doesn't look valid.");
         } else {
-        if (isEmailBanned($Address, $mysqli)) {
-            $alertForm = alert("danger", "Your account is banned.");
-        } else {
+            // Check Referral
+            if($_COOKIE['refer']){
+                if(is_numeric($_COOKIE['refer'])){
+                    $referID2 = $mysqli->real_escape_string($_COOKIE['refer']);
+                    $AddressCheck = $mysqli->query("SELECT COUNT(id) FROM users WHERE id = '$referID2'")->fetch_row()[0];
+                    if($AddressCheck == 1){
+                        $referID = $referID2;
+                    } else {
+                        $referID = 0;
+                    }
+                } else {
+                    $referID = 0;
+                }
+            } else {
+                $referID = 0;
+            }
 
-		if(!isset($_POST['token']) || $_POST['token'] !== $_SESSION['token']) {
-		unset($_SESSION['token']);
-		$_SESSION['token'] = md5(md5(uniqid().uniqid().mt_rand()));
-		exit;
-		}
-		unset($_SESSION['token']);
-		$_SESSION['token'] = md5(md5(uniqid().uniqid().mt_rand()));
+            $AddressCheck = $mysqli->query("SELECT COUNT(id) FROM users WHERE LOWER(address) = '".strtolower($Address)."' LIMIT 1")->fetch_row()[0];
+            $timestamp = $mysqli->real_escape_string(time());
+            $ip = $mysqli->real_escape_string($realIpAddressUser);
 
-		if($_POST['address']){
-			$Address = $mysqli->real_escape_string(trim($_POST['address']));
-			$addressCheck = (strlen($Address) >= 30 && strlen($Address) <= 80);
-			if(!$addressCheck){
-				$alertForm = alert("danger", "The Zero address doesn't look valid.");
-			} else {
-				// Check Referral
-				if($_COOKIE['refer']){
-					if(is_numeric($_COOKIE['refer'])){
-						$referID2 = $mysqli->real_escape_string($_COOKIE['refer']);
-						$AddressCheck = $mysqli->query("SELECT COUNT(id) FROM users WHERE id = '$referID2'")->fetch_row()[0];
-						if($AddressCheck == 1){
-							$referID = $referID2;
-						} else {
-							$referID = 0;
-						}
-					} else {
-						$referID = 0;
-					}
-				} else {
-					$referID = 0;
-				}
+            if($AddressCheck == 1){
+                $userID = $mysqli->query("SELECT id FROM users WHERE LOWER(address) = '".strtolower($Address)."' LIMIT 1")->fetch_assoc()['id'];
+                $_SESSION['address'] = $userID;
+                $mysqli->query("UPDATE users Set last_activity = '$timestamp', ip_address = '$ip' WHERE id = '$userID'");
+                header("Location: index.php?page=dashboard");
+            } else {
 
-				$AddressCheck = $mysqli->query("SELECT COUNT(id) FROM users WHERE LOWER(address) = '".strtolower($Address)."' LIMIT 1")->fetch_row()[0];
-				$timestamp = $mysqli->real_escape_string(time());
-				$ip = $mysqli->real_escape_string($realIpAddressUser);
+                $mysqli->query("INSERT INTO users (address, ip_address, balance, joined, last_activity, referred_by, last_claim) VALUES ('$Address', '$ip', '0', '$timestamp', '$timestamp', '$referID', '0')");
+                $_SESSION['address'] = $mysqli->insert_id;
+            }
+            header("Location: index.php?page=dashboard");
+            exit;
+        }
+    } else {
+        $alertForm = alert("danger", "The Zero address field can't be blank.");
 
-				if($AddressCheck == 1){
-					$userID = $mysqli->query("SELECT id FROM users WHERE LOWER(address) = '".strtolower($Address)."' LIMIT 1")->fetch_assoc()['id'];
-					$_SESSION['address'] = $userID;
-					$mysqli->query("UPDATE users Set last_activity = '$timestamp', ip_address = '$ip' WHERE id = '$userID'");
-                    header("Location: index.php?page=dashboard");
-				} else {
-
-					$mysqli->query("INSERT INTO users (address, ip_address, balance, joined, last_activity, referred_by, last_claim, claim_cryptokey) VALUES ('$Address', '$ip', '0', '$timestamp', '$timestamp', '$referID', '0', '')");
-					$_SESSION['address'] = $mysqli->insert_id;
-				}
-				header("Location: index.php?page=dashboard");
-				exit;
-			}
-		} else {
-			$alertForm = alert("danger", "The Zero address field can't be blank.");
-
-		}
-	}
+    }
 }
 }
+
 
 ?>
 

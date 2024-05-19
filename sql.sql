@@ -175,3 +175,9 @@ CREATE TABLE IF NOT EXISTS `offerwalls_history` (
   `timestamp` int(32) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `white_list` (
+  `id` int(32) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ip_address` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;

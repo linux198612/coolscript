@@ -72,6 +72,10 @@ if($user){
             $pageTitle = 'Converter';
             include 'templates/converter.php';
             break;
+        case 'blocked':
+            $pageTitle = 'Account blocked';
+            include 'templates/blocked.php';
+            break;
         case 'logout':
             include 'templates/logout.php';
             break;

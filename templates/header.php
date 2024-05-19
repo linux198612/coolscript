@@ -23,6 +23,33 @@ if ($result) {
 }
 
 
+// Get user's IP address
+$user_ip = $_SERVER['REMOTE_ADDR'];
+
+// Check if the IP address exists in the white_list table
+$whitelist_check_sql = "SELECT COUNT(*) as count FROM white_list WHERE ip_address = ?";
+$stmt = $mysqli->prepare($whitelist_check_sql);
+$stmt->bind_param('s', $user_ip);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+$whitelist_count = $row['count'];
+
+// Check if the IP address exists in the users table
+$ip_check_sql = "SELECT COUNT(*) as count FROM users WHERE ip_address = ?";
+$stmt = $mysqli->prepare($ip_check_sql);
+$stmt->bind_param('s', $user_ip);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+$user_count = $row['count'];
+
+// If the IP is found in users table more than once and not in white_list table, block the user
+if ($user_count > 1 && $whitelist_count == 0) {
+    header("Location: index.php?page=blocked");
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -180,6 +207,12 @@ if ($result) {
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="index.php?page=daily_bonus">Daily bonus</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="index.php?page=coupon">Coupon Code</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="index.php?page=offerwalls">Offerwalls</a>
             </li>
             <?php 
 			if($claimStatus == "yes"){

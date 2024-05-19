@@ -154,6 +154,6 @@ $reward_in_USD_last_check = $mysqli->query("SELECT value FROM settings WHERE nam
 /*
 Site version information:
 */
-$version = "0.005";
+$version = "0.006";
 
 ?>
