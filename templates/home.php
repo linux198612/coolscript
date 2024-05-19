@@ -312,6 +312,20 @@ if ($result->num_rows > 0) {
 </div>
 <footer class="footer text-center">
     <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Contact</h5>
+                <p><a href="mailto:youemailaddress">youemailaddress</a></p>
+            </div>
+            <div class="col-md-4">
+                <h5>Community</h5>
+                <p><a href="https://t.me/yourtelegramlink" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" style="width: 20px; height: 20px;"> Telegram</a></p>
+            </div>
+            <div class="col-md-4">
+                <h5>Links</h5>
+                <a href="index.php">Index</a><br><a href="index.php?page=faq">FAQ</a>
+            </div>
+        </div>
         <p>&copy; <?php echo date('Y'); ?> <a href="./"><?php echo $faucetName; ?></a>. All Rights Reserved. Version: <?php echo $version; ?><br> Powered by <a href="https://coolscript.hu">CoolScript</a></p>
     </div>
 </footer>

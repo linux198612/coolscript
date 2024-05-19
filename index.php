@@ -94,6 +94,10 @@ if($user){
             $pageTitle = 'Home';
             include 'templates/home.php';
             break;
+        case 'faw':
+            $pageTitle = 'FAQ';
+            include 'templates/faq.php';
+            break;
         default:
             $pageTitle = 'Home';
             include 'templates/home.php';
