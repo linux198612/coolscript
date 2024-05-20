@@ -1,0 +1,3 @@
+Changelog
+0.006->0.007:
+- Fix duplicate ip system. only last 24 hour activity check.
