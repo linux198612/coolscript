@@ -35,10 +35,14 @@ $result = $stmt->get_result();
 $row = $result->fetch_assoc();
 $whitelist_count = $row['count'];
 
-// Check if the IP address exists in the users table
-$ip_check_sql = "SELECT COUNT(*) as count FROM users WHERE ip_address = ?";
+// Get the current timestamp
+$current_time = time();
+$twenty_four_hours_ago = $current_time - 86400; // 24 hours ago in seconds
+
+// Check if the IP address exists in the users table with activity in the last 24 hours
+$ip_check_sql = "SELECT COUNT(*) as count FROM users WHERE ip_address = ? AND last_activity > ?";
 $stmt = $mysqli->prepare($ip_check_sql);
-$stmt->bind_param('s', $user_ip);
+$stmt->bind_param('si', $user_ip, $twenty_four_hours_ago);
 $stmt->execute();
 $result = $stmt->get_result();
 $row = $result->fetch_assoc();
