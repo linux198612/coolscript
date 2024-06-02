@@ -138,6 +138,7 @@ if (!isset($_SESSION['admin_username'])) {
                     <a class="dropdown-item" href="admin.php?page=duplicate_check">Duplicate Check</a>
                     <a class="dropdown-item" href="admin.php?page=banned_list">Banned list</a>
                     <a class="dropdown-item" href="admin.php?page=user_list">User List</a>
+					<a class="dropdown-item" href="admin.php?page=messages">Messages</a>
                 </div>
 				</li>
 				<li class="nav-item <?php echo ($page == 'logout') ? '' : ''; ?>">
@@ -737,7 +738,125 @@ $getMinWithdrawalGateway = $mysqli->query("SELECT value FROM settings WHERE name
         }
         break;
     
-    
+case 'messages':
+    // Minden üzenetet lekérünk az adatbázisból
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['message_id'])) {
+    $messageId = $_POST['message_id'];
+    $adminReply = $_POST['admin_reply'];
+
+    // Admin válasz mentése az adatbázisba
+    $stmtUpdate = $mysqli->prepare("UPDATE messages SET admin_reply = ?, status = 'Closed' WHERE id = ?");
+    $stmtUpdate->bind_param("si", $adminReply, $messageId);
+    $stmtUpdate->execute();
+
+if ($stmtUpdate->affected_rows > 0) {
+    // Az üzenet adatainak lekérdezése
+    $messageQuery = "SELECT user_id FROM messages WHERE id = ?";
+    $stmtMessage = $mysqli->prepare($messageQuery);
+    $stmtMessage->bind_param("i", $messageId);
+    $stmtMessage->execute();
+    $stmtMessage->store_result();
+    $stmtMessage->bind_result($userId);
+    $stmtMessage->fetch();
+
+    if ($stmtMessage->num_rows > 0) {
+        // Admin válaszolt az üzenetre, értesítést küldünk a felhasználónak
+        $notificationText = "Your contact question has been answered!";
+        $stmtInsert = $mysqli->prepare("INSERT INTO notifications (userid, text) VALUES (?, ?)");
+        $stmtInsert->bind_param("is", $userId, $notificationText);
+        $stmtInsert->execute();
+        $stmtInsert->close();
+    }
+
+    $stmtMessage->close();
+}
+
+$stmtUpdate->close();
+    echo "Reply sent successfully!";
+}
+
+// Minden üzenetet lekérünk az adatbázisból
+$query = "SELECT * FROM messages ORDER BY timestamp DESC";
+$result = $mysqli->query($query);
+
+// Üzenetek megjelenítése
+if ($result && $result->num_rows > 0) {
+    echo '<h2>All Messages</h2>';
+    echo '<div class="table-responsive">';
+    echo '<table class="table table-bordered">';
+    echo '<thead>';
+    echo '<tr>';
+    echo '<th>ID</th>';
+    echo '<th>User ID</th>';
+    echo '<th>Message</th>';
+    echo '<th>Admin Reply</th>';
+    echo '<th>Status</th>';
+    echo '<th>Timestamp</th>';
+    echo '<th>Actions</th>';
+    echo '</tr>';
+    echo '</thead>';
+    echo '<tbody>';
+
+    while ($row = $result->fetch_assoc()) {
+        $id = $row['id'];
+        $userId = $row['user_id'];
+        $message = $row['message'];
+        $adminReply = $row['admin_reply'];
+        $status = $row['status'];
+        $timestamp = $row['timestamp'];
+
+        echo '<tr>';
+        echo "<td>{$id}</td>";
+        echo "<td>{$userId}</td>";
+        echo "<td>{$message}</td>";
+        echo "<td>{$adminReply}</td>";
+        echo "<td>{$status}</td>";
+        echo "<td>{$timestamp}</td>";
+        echo "<td>";
+        // Ha nincs admin válasz, jeleníts meg egy válaszolás űrlapot modális ablakban
+        if (empty($adminReply)) {
+            echo '<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#adminReplyModal' . $id . '">Reply</button>';
+            // Modal az admin válaszadáshoz
+            echo '<div class="modal fade" id="adminReplyModal' . $id . '" tabindex="-1" role="dialog" aria-labelledby="adminReplyModalLabel' . $id . '" aria-hidden="true">';
+            echo '<div class="modal-dialog" role="document">';
+            echo '<div class="modal-content">';
+            echo '<div class="modal-header">';
+            echo '<h5 class="modal-title" id="adminReplyModalLabel' . $id . '">Admin Reply</h5>';
+            echo '<button type="button" class="close" data-dismiss="modal" aria-label="Close">';
+            echo '<span aria-hidden="true">&times;</span>';
+            echo '</button>';
+            echo '</div>';
+            echo '<div class="modal-body">';
+            echo '<form action="" method="post">';
+            echo '<input type="hidden" name="message_id" value="' . $id . '">';
+            echo '<div class="form-group">';
+            echo '<label for="adminReply' . $id . '">Your reply:</label>';
+            echo '<textarea class="form-control" id="adminReply' . $id . '" name="admin_reply" rows="3"></textarea>';
+            echo '</div>';
+            echo '</div>';
+            echo '<div class="modal-footer">';
+            echo '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>';
+            echo '<button type="submit" class="btn btn-primary">Send Reply</button>';
+            echo '</form>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+        } else {
+            echo "Already replied";
+        }
+        echo "</td>";
+        echo '</tr>';
+    }
+
+    echo '</tbody>';
+    echo '</table>';
+    echo '</div>';
+} else {
+    echo 'No messages found.';
+}
+    break;
+
     
     
         case 'logout':
