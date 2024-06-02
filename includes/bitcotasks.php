@@ -18,7 +18,7 @@ if(md5($subId.$transId.$reward.$secret) != $signature)
 }else{
 		$run = $mysqli->query("UPDATE users SET credits = credits + $reward, xp = xp + '1' WHERE id = $subId");
 		$timestamp = time();
-		$run = $mysqli->query("INSERT INTO offerwalls_history (userid, offerwalls, offerwalls_name, type, amount, timestamp) VALUES ('$subId', 'BitcoTasks', '$offer_name', '$offer_type', '$addbalance', '$timestamp')");
+		$run = $mysqli->query("INSERT INTO offerwalls_history (userid, offerwalls, offerwalls_name, type, amount, timestamp) VALUES ('$subId', 'BitcoTasks', '$offer_name', '$offer_type', '$reward', '$timestamp')");
 
 		// $referralPercent = "10";
 		// $referralPercentDecimal = $referralPercent / 100;
