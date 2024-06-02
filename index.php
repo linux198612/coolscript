@@ -72,7 +72,15 @@ if($user){
             $pageTitle = 'Converter';
             include 'templates/converter.php';
             break;
-        case 'blocked':
+		case 'notifications':
+            $pageTitle = 'Notifications';
+            include 'templates/notifications.php';
+            break;
+		case 'admincontact':
+            $pageTitle = 'Admin contact';
+            include 'templates/admincontact.php';
+            break;
+		case 'blocked':
             $pageTitle = 'Account blocked';
             include 'templates/blocked.php';
             break;
