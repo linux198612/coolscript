@@ -46,7 +46,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin panel</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- Add your custom CSS styles here -->
+
+    <!-- JavaScript könyvtárak betöltése -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
 
@@ -111,9 +120,16 @@ if (!isset($_SESSION['admin_username'])) {
                 <li class="nav-item <?php echo ($page == 'basesettings') ? 'active' : ''; ?>">
                     <a class="nav-link" href="admin.php?page=basesettings">Base settings</a>
                 </li>
-                <li class="nav-item <?php echo ($page == 'faucet') ? 'active' : ''; ?>">
-                    <a class="nav-link" href="admin.php?page=faucet">Faucet settings</a>
-                </li>
+				<li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Earn
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="admin.php?page=faucet">Faucet</a>
+                    <a class="dropdown-item" href="admin.php?page=coupon">Coupon code</a>
+                 </div>
+				</li>
+				
                 <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Users
@@ -123,7 +139,7 @@ if (!isset($_SESSION['admin_username'])) {
                     <a class="dropdown-item" href="admin.php?page=banned_list">Banned list</a>
                     <a class="dropdown-item" href="admin.php?page=user_list">User List</a>
                 </div>
-            </li>
+				</li>
 				<li class="nav-item <?php echo ($page == 'logout') ? '' : ''; ?>">
                     <a class="nav-link" href="admin.php?page=logout">Logout</a>
                 </li>
@@ -213,6 +229,179 @@ $getzerochain_privatekey = $mysqli->query("SELECT value FROM settings WHERE name
 </div>
 <?php
             break;
+			
+case 'coupon':
+    echo "<h1>Setting Coupon Code</h1>";
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (isset($_POST['action']) && $_POST['action'] == 'add') {
+            $coupon_code = $mysqli->real_escape_string($_POST['coupon_code']);
+            $coupon_reward = $mysqli->real_escape_string($_POST['coupon_reward']);
+            $coupon_date = $mysqli->real_escape_string($_POST['coupon_date']);
+            $coupon_limit_per_day = $mysqli->real_escape_string($_POST['coupon_limit_per_day']);
+
+            $insertCouponSQL = "INSERT INTO coupons (code, reward, date, limit_per_day) VALUES ('$coupon_code', '$coupon_reward', '$coupon_date', '$coupon_limit_per_day')";
+            if ($mysqli->query($insertCouponSQL)) {
+                $messages = "Coupon code added successfully!";
+            } else {
+                $messages = "Error occurred while adding coupon code: " . $mysqli->error;
+            }
+        } elseif (isset($_POST['action']) && $_POST['action'] == 'delete') {
+            $coupon_id = $mysqli->real_escape_string($_POST['coupon_id']);
+
+            $deleteCouponSQL = "DELETE FROM coupons WHERE id = '$coupon_id'";
+            if ($mysqli->query($deleteCouponSQL)) {
+                $messages = "Coupon code deleted successfully!";
+            } else {
+                $messages = "Error occurred while deleting coupon code: " . $mysqli->error;
+            }
+        } elseif (isset($_POST['action']) && $_POST['action'] == 'edit') {
+            $coupon_id = $mysqli->real_escape_string($_POST['coupon_id']);
+            $coupon_code = $mysqli->real_escape_string($_POST['coupon_code']);
+            $coupon_reward = $mysqli->real_escape_string($_POST['coupon_reward']);
+            $coupon_date = $mysqli->real_escape_string($_POST['coupon_date']);
+            $coupon_limit_per_day = $mysqli->real_escape_string($_POST['coupon_limit_per_day']);
+
+            $updateCouponSQL = "UPDATE coupons SET code = '$coupon_code', reward = '$coupon_reward', date = '$coupon_date', limit_per_day = '$coupon_limit_per_day' WHERE id = '$coupon_id'";
+            if ($mysqli->query($updateCouponSQL)) {
+                $messages = "Coupon code updated successfully!";
+            } else {
+                $messages = "Error occurred while updating coupon code: " . $mysqli->error;
+            }
+        }
+    }
+
+    $coupons = $mysqli->query("SELECT * FROM coupons");
+    ?>
+
+<div class="container">
+    <form method="post" action="">
+        <input type="hidden" name="action" value="add">
+        <div class="form-group">
+            <label for="coupon_code">Coupon code:</label>
+            <input type="text" class="form-control" id="coupon_code" name="coupon_code" required>
+        </div>
+        <div class="form-group">
+            <label for="coupon_reward">Coupon reward:</label>
+            <input type="number" step="0.01" class="form-control" id="coupon_reward" name="coupon_reward" required>
+        </div>
+        <div class="form-group">
+            <label for="coupon_date">Expiration date:</label>
+            <input type="text" class="form-control" id="coupon_date" name="coupon_date" required>
+        </div>
+        <div class="form-group">
+            <label for="coupon_limit_per_day">Daily limit:</label>
+            <input type="number" class="form-control" id="coupon_limit_per_day" name="coupon_limit_per_day" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+    <?php if ($messages) { ?>
+        <div class="alert alert-info mt-3"><?php echo $messages; ?></div>
+    <?php } ?>
+</div>
+
+
+<h2>List of Coupon Codes</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Code</th>
+            <th>Reward</th>
+            <th>Expiration Date</th>
+            <th>Daily Limit</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php 
+        // Modified query to fetch latest coupon codes
+        $coupons = $mysqli->query("SELECT * FROM coupons ORDER BY date DESC");
+        while ($row = $coupons->fetch_assoc()) { 
+        ?>
+            <tr>
+                <td><?php echo $row['id']; ?></td>
+                <td><?php echo $row['code']; ?></td>
+                <td><?php echo $row['reward']; ?></td>
+                <td><?php echo $row['date']; ?></td>
+                <td><?php echo $row['limit_per_day']; ?></td>
+                <td>
+                    <form method="post" action="" style="display:inline-block;">
+                        <input type="hidden" name="coupon_id" value="<?php echo $row['id']; ?>">
+                        <input type="hidden" name="action" value="delete">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                    <button class="btn btn-primary btn-sm" onclick="editCoupon(<?php echo $row['id']; ?>, '<?php echo $row['code']; ?>', <?php echo $row['reward']; ?>, '<?php echo $row['date']; ?>', <?php echo $row['limit_per_day']; ?>)">Edit</button>
+                </td>
+            </tr>
+        <?php } ?>
+    </tbody>
+</table>
+
+<div id="editCouponModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Coupon</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="">
+                <input type="hidden" name="action" value="edit">
+                <input type="hidden" id="edit_coupon_id" name="coupon_id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="edit_coupon_code">Coupon code:</label>
+                        <input type="text" class="form-control" id="edit_coupon_code" name="coupon_code" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_coupon_reward">Coupon reward:</label>
+                        <input type="number" step="0.01" class="form-control" id="edit_coupon_reward" name="coupon_reward" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_coupon_date">Expiration date:</label>
+                        <input type="text" class="form-control datepicker" id="edit_coupon_date" name="coupon_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_coupon_limit_per_day">Daily limit:</label>
+                        <input type="number" class="form-control" id="edit_coupon_limit_per_day" name="coupon_limit_per_day" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(function() {
+    $("#coupon_date").datepicker({
+        dateFormat: "yy-mm-dd"
+    });
+});
+
+$(function() {
+    $("#edit_coupon_date").datepicker({
+        dateFormat: "yy-mm-dd"
+    });
+});
+
+function editCoupon(id, code, reward, date, limit_per_day) {
+    document.getElementById('edit_coupon_id').value = id;
+    document.getElementById('edit_coupon_code').value = code;
+    document.getElementById('edit_coupon_reward').value = reward;
+    document.getElementById('edit_coupon_date').value = date;
+    document.getElementById('edit_coupon_limit_per_day').value = limit_per_day;
+    $('#editCouponModal').modal('show');
+}
+</script>
+<?php
+break;	
+
+			
         case 'passch':
             // Users oldal tartalma
             echo "<h1>Admin password change</h1>";
@@ -570,9 +759,7 @@ $getMinWithdrawalGateway = $mysqli->query("SELECT value FROM settings WHERE name
 }
  ?>
 </div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html>
 
