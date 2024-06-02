@@ -199,6 +199,28 @@ if ($user_count > 1 && $whitelist_count == 0) {
             <li>
                 <a class="nav-link" href="index.php?page=dashboard">Dashboard</a>
             </li>
+			<li class="nav-item">
+    <a class="nav-link" href="index.php?page=withdraw">Withdraw</a>
+</li>
+<?php 
+// Ellenőrizzük, hogy van-e olvasatlan értesítése a felhasználónak
+$unreadNotificationsQuery = "SELECT COUNT(*) AS unread_count FROM notifications WHERE userid = '{$user['id']}' AND viewed = '0'";
+$unreadNotificationsResult = $mysqli->query($unreadNotificationsQuery);
+if ($unreadNotificationsResult) {
+    $unreadNotificationsCount = $unreadNotificationsResult->fetch_assoc()['unread_count'];
+    if ($unreadNotificationsCount > 0) {
+        echo '<li class="nav-item">
+                  <a class="nav-link" href="index.php?page=notifications">
+                      Notifications <b class="badge badge-danger">' . $unreadNotificationsCount . '</b>
+                  </a>
+              </li>';
+    } else {
+        echo '<li class="nav-item">
+                  <a class="nav-link" href="index.php?page=notifications">Notifications</a>
+              </li>';
+    }
+}
+?>
             <li class="nav-item">
                 <a class="nav-link" href="index.php?page=withdraw">Withdraw</a>
             </li>
@@ -217,6 +239,9 @@ if ($user_count > 1 && $whitelist_count == 0) {
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="index.php?page=offerwalls">Offerwalls</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://zerads.com/ptc.php?ref=4652&user=<?=$user['address'];?>" target="_blank">PTC</a>
             </li>
             <?php 
 			if($claimStatus == "yes"){
@@ -238,6 +263,9 @@ if ($user_count > 1 && $whitelist_count == 0) {
                 </a>
             </li>
             <div class="separator"></div>
+			<li class="nav-item">
+                <a class="nav-link" href="index.php?page=admincontact">Contact</a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="index.php?page=logout">Logout</a>
             </li>
