@@ -3,6 +3,8 @@
 $faucetName = $mysqli->query("SELECT * FROM settings WHERE id = '1'")->fetch_assoc()['value'];
 
 $claimStatus = $mysqli->query("SELECT value FROM settings WHERE name = 'claim_enabled' LIMIT 1")->fetch_assoc()['value'];
+$ptcStatus = $mysqli->query("SELECT value FROM settings WHERE name = 'ptc_status' LIMIT 1")->fetch_assoc()['value'];
+$zerads_id = $mysqli->query("SELECT value FROM settings WHERE name = 'zerads_id' LIMIT 1")->fetch_assoc()['value'];
 
 $availableShortlinksQuery = "SELECT SUM(sl.limit_view - IFNULL(viewed.view_count, 0)) AS available_shortlinks_count
     FROM shortlinks_list AS sl
@@ -238,10 +240,14 @@ if ($unreadNotificationsResult) {
             <li class="nav-item">
                 <a class="nav-link" href="index.php?page=offerwalls">Offerwalls</a>
             </li>
+			            <?php 
+			if($ptcStatus == "yes"){
+			?>
             <li class="nav-item">
-                <a class="nav-link" href="https://zerads.com/ptc.php?ref=4652&user=<?=$user['address'];?>" target="_blank">PTC</a>
+                <a class="nav-link" href="https://zerads.com/ptc.php?ref=<?php echo $zerads_id; ?>&user=<?=$user['address'];?>" target="_blank">PTC</a>
             </li>
-            <?php 
+            <?php
+			}
 			if($claimStatus == "yes"){
 			?>
             <li class="nav-item">

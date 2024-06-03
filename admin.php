@@ -127,6 +127,7 @@ if (!isset($_SESSION['admin_username'])) {
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="admin.php?page=faucet">Faucet</a>
                     <a class="dropdown-item" href="admin.php?page=coupon">Coupon code</a>
+					<a class="dropdown-item" href="admin.php?page=ptc">PTC</a>
                  </div>
 				</li>
 				
@@ -402,7 +403,53 @@ function editCoupon(id, code, reward, date, limit_per_day) {
 <?php
 break;	
 
-			
+		case 'ptc':
+            // Users oldal tartalma
+            echo "<h1>PTC Settings</h1>";
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  
+  $zerads_id = $mysqli->real_escape_string($_POST['zerads_id']);
+  $ptcStatus = $mysqli->real_escape_string($_POST['ptcStatus']);
+  // Frissítsd a settings táblát a beállításokkal
+  $updatezerads_id = "UPDATE settings SET value = '$zerads_id' WHERE name = 'zerads_id'";
+  $updateptcStatus = "UPDATE settings SET value = '$ptcStatus' WHERE name = 'ptcStatus'";
+  
+  if (
+      $mysqli->query($updatezerads_id) === TRUE &&
+      $mysqli->query($updateptcStatus) === TRUE
+  ) {
+      // Sikeres frissítés után visszairányítás a dashboard.php oldalra
+      echo "<div class='alert alert-success' role='alert'>Successful update!</div>";
+  } else {
+    //  echo "Error updating settings: " . $mysqli->error;
+  }
+
+}
+$ptcStatus = $mysqli->query("SELECT value FROM settings WHERE name = 'ptc_status' LIMIT 1")->fetch_assoc()['value'];
+$zerads_id = $mysqli->query("SELECT value FROM settings WHERE name = 'zerads_id' LIMIT 1")->fetch_assoc()['value'];
+?>
+
+
+<div class="container mt-5">
+    <form method="post" action="?page=ptc">
+        <div class="form-group">
+            <label for="ptcStatus">PTC Status :</label>
+            <select class="form-control" id="ptcStatus" name="ptcStatus">
+        <option value="on" <?php if($ptcStatus == "on") echo "selected"; ?>>On</option>
+        <option value="off" <?php if($ptcStatus == "off") echo "selected"; ?>>Off</option>
+    </select>
+        </div>
+        <div class="form-group">
+            <label for="zerads_id">zerads.com id :</label>
+            <input type="text" class="form-control" id="zerads_id" name="zerads_id" value="<?php echo $zerads_id; ?>">
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+<?php
+            break;	
+
+	
         case 'passch':
             // Users oldal tartalma
             echo "<h1>Admin password change</h1>";
