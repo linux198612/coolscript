@@ -409,10 +409,10 @@ break;
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
   
   $zerads_id = $mysqli->real_escape_string($_POST['zerads_id']);
-  $ptcStatus = $mysqli->real_escape_string($_POST['ptcStatus']);
+  $ptcStatus = $mysqli->real_escape_string($_POST['ptc_status']);
   // Frissítsd a settings táblát a beállításokkal
   $updatezerads_id = "UPDATE settings SET value = '$zerads_id' WHERE name = 'zerads_id'";
-  $updateptcStatus = "UPDATE settings SET value = '$ptcStatus' WHERE name = 'ptcStatus'";
+  $updateptcStatus = "UPDATE settings SET value = '$ptcStatus' WHERE name = 'ptc_status'";
   
   if (
       $mysqli->query($updatezerads_id) === TRUE &&
@@ -433,18 +433,20 @@ $zerads_id = $mysqli->query("SELECT value FROM settings WHERE name = 'zerads_id'
 <div class="container mt-5">
     <form method="post" action="?page=ptc">
         <div class="form-group">
-            <label for="ptcStatus">PTC Status :</label>
-            <select class="form-control" id="ptcStatus" name="ptcStatus">
-        <option value="on" <?php if($ptcStatus == "on") echo "selected"; ?>>On</option>
-        <option value="off" <?php if($ptcStatus == "off") echo "selected"; ?>>Off</option>
-    </select>
-        </div>
-        <div class="form-group">
             <label for="zerads_id">zerads.com id :</label>
             <input type="text" class="form-control" id="zerads_id" name="zerads_id" value="<?php echo $zerads_id; ?>">
         </div>
+        <div class="form-group">
+            <label for="ptc_status">PTC Status :</label>
+            <select class="form-control" id="ptc_status" name="ptc_status">
+        <option value="yes" <?php if($ptcStatus == "yes") echo "selected"; ?>>On</option>
+        <option value="no" <?php if($ptcStatus == "no") echo "selected"; ?>>Off</option>
+    </select>
+        </div>
         <button type="submit" class="btn btn-primary">Save</button>
     </form>
+	
+	<b>Postback url example: https://yourdomain.com/includes/zeradsptc.php?pwd=xxxxxx</b>
 </div>
 <?php
             break;	
