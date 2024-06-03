@@ -90,7 +90,9 @@ if (strpos($result, '"txid":"') !== false) {
 if($TxID != "") {
 
 	$mysqli->query("INSERT INTO withdraw_history (userid, address, amount, txid, timestamp) VALUES ('{$user['id']}', '{$user['address']}', '{$user['balance']}', '$TxID', UNIX_TIMESTAMP(NOW()))");
-    echo "Paid---" . $balance . "---" . $TxID;
+        echo "Successful payment: " . $balance . " ZER";
+    $notificationText = "Your withdrawal of ".$balance." ZER has been processed. Transaction ID: ".$TxID;
+        $mysqli->query("INSERT INTO notifications (userid, text) VALUES ('{$user['id']}', '{$notificationText}')");
     
 
 

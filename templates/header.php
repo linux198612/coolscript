@@ -199,9 +199,7 @@ if ($user_count > 1 && $whitelist_count == 0) {
             <li>
                 <a class="nav-link" href="index.php?page=dashboard">Dashboard</a>
             </li>
-			<li class="nav-item">
-    <a class="nav-link" href="index.php?page=withdraw">Withdraw</a>
-</li>
+
 <?php 
 // Ellenőrizzük, hogy van-e olvasatlan értesítése a felhasználónak
 $unreadNotificationsQuery = "SELECT COUNT(*) AS unread_count FROM notifications WHERE userid = '{$user['id']}' AND viewed = '0'";

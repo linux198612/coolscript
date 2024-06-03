@@ -1,3 +1,5 @@
-Changelog
+Changelog:
+0.007->0.008:
+- add notifications and messages system
 0.006->0.007:
 - Fix duplicate ip system. only last 24 hour activity check.
