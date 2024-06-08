@@ -30,15 +30,17 @@ include("header.php");
     
                             // Szint progressz bár
                             echo "<h4>Level: " . $currentLevel . "</h4>";
-                            echo '<div class="progress">';
-                            echo '<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="' . $remainingXP . '" aria-valuemin="0" aria-valuemax="' . $xpThreshold . '" style="width: ' . (100 - $percentComplete) . '%;">';
-                            echo '<span class="progress-text" style="position: absolute; left: 50%; transform: translateX(-50%);color:black;">' . (100 - $percentComplete) . '%</span>';
+                            echo '<div class="progress" style="height: 20px; position: relative; background-color: #f3f3f3;">';
+                            echo '<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="' . $remainingXP . '" aria-valuemin="0" aria-valuemax="' . $xpThreshold . '" style="width: ' . (100 - $percentComplete) . '%; background-color: #5bc0de;">';
+							echo '<span style="position: absolute; width: 100%; text-align: center; color: black; font-weight: bold;">' . (100 - $percentComplete) . '%</span>';
                             echo '</div>';
                             echo '</div>';
-                            echo "<p>Remaining " . $remainingXP . " XP for Next Level. </p>";
                         }
-    
+   
                         echo "<p><b>XP Balance: </b>" . $currentXP . " XP</p>";
+						
+						     $totalUserWithdrawn = $mysqli->query("SELECT SUM(amount) FROM withdraw_history where userid = '{$user['id']}'")->fetch_row()[0];
+						echo "<p><strong>Total withdraw:</strong> $totalUserWithdrawn ZER</p>";
 
                     ?>
                 </div>

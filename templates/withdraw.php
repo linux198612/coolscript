@@ -7,45 +7,43 @@ include("header.php");
 <div class="text-center">
 
 </div>
-<div class="row">
-        <div class="col-md-6">
-            <div class="card">
+<div class="card-deck">
+
+        <div class="card">
                 <div class="card-header">
-                    <h3>Balance</h3>
+                    <h3>Stats</h3>
                 </div>
-                <div class="card-body">
+            <div class="card-body">
                     <?php
-echo "<h3>Balance</h3>";
-$amount = formatAmount($balance);
-$currencyName = "ZER";
-$satoshi = toSatoshi($user['balance']);
-$satoshiName = $faucetCurrencies[$websiteCurrency][1];
+						echo "<h3>Balance</h3>";
+						$amount = formatAmount($balance);
+						$currencyName = "ZER";
+						$satoshi = toSatoshi($user['balance']);
+						$satoshiName = $faucetCurrencies[$websiteCurrency][1];
 
-echo "$amount $currencyName ($satoshi $satoshiName)<br /><br />";
+						echo "$amount $currencyName ($satoshi $satoshiName)<br /><br />";
 
-$minWithdraw = $mysqli->query("SELECT value FROM settings WHERE name = 'min_withdrawal_gateway' LIMIT 1")->fetch_assoc()['value'];
-$progress = toSatoshi($user['balance']) / $minWithdraw;
-$progressWithdraw = $progress * 100;
+						$minWithdraw = $mysqli->query("SELECT value FROM settings WHERE name = 'min_withdrawal_gateway' LIMIT 1")->fetch_assoc()['value'];
+						$progress = toSatoshi($user['balance']) / $minWithdraw;
+						$progressWithdraw = $progress * 100;
 
-// Korlátozzuk a progressz értékét 100%-ra, ha az 100% feletti
-if ($progressWithdraw > 100) {
-    $progressWithdraw = 100;
-}
+						// Korlátozzuk a progressz értékét 100%-ra, ha az 100% feletti
+						if ($progressWithdraw > 100) {
+							$progressWithdraw = 100;
+						}
 
-echo '<div class="progress">
-    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="'.$progressWithdraw .'"
-    aria-valuemin="0" aria-valuemax="100" style="width:'.$progressWithdraw .'%">
-    </div>
-</div>';
-echo 'Withdraw progress: ';
-echo number_format($progressWithdraw, 2);
-echo '%<br>';
-
+							echo '<div class="progress" style="height: 20px; position: relative; background-color: #f3f3f3;">
+								<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="'.$progressWithdraw.'"
+								aria-valuemin="0" aria-valuemax="100" style="width:'.$progressWithdraw.'%; background-color: #5bc0de;">
+									<span style="position: absolute; width: 100%; text-align: center; color: black; font-weight: bold;">'.number_format($progressWithdraw, 2).'%</span>
+								</div>
+							</div>';
+						echo '<br>';
+							$totalUserWithdrawn = $mysqli->query("SELECT SUM(amount) FROM withdraw_history where userid = '{$user['id']}'")->fetch_row()[0];
+						echo "<p><strong>Total withdraw:</strong> $totalUserWithdrawn ZER</p>";
                     ?>
                 </div>
-            </div>
         </div>
-        <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
                     <h3>Withdraw</h3>
@@ -127,7 +125,6 @@ if($TxID != "") {
                     ?>
                 </div>
             </div>
-        </div>
     </div>
 <?php
 $userId = $user['id'];
