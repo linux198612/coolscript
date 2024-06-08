@@ -284,7 +284,7 @@ case 'coupon':
         </div>
         <div class="form-group">
             <label for="coupon_reward">Coupon reward:</label>
-            <input type="number" step="0.01" class="form-control" id="coupon_reward" name="coupon_reward" required>
+            <input type="number" step="0.001" class="form-control" id="coupon_reward" name="coupon_reward" required>
         </div>
         <div class="form-group">
             <label for="coupon_date">Expiration date:</label>
