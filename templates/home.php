@@ -22,37 +22,42 @@ if(isset($_POST['address'])){
             if(!$addressCheck){
                 $alertForm = alert("danger", "The Zero address doesn't look valid.");
             } else {
-                if($_COOKIE['refer']){
-                    if(is_numeric($_COOKIE['refer'])){
-                        $referID2 = $mysqli->real_escape_string($_COOKIE['refer']);
-                        $AddressCheck = $mysqli->query("SELECT COUNT(id) FROM users WHERE id = '$referID2'")->fetch_row()[0];
-                        if($AddressCheck == 1){
-                            $referID = $referID2;
+                // Check if the address starts with 't1'
+                if(substr($Address, 0, 2) !== 't1') {
+                    $alertForm = alert("danger", "Error. Only zerocoin addresses are allowed. <br> Don't have a zerocoin address? <br><a href='https://zerochain.info/' target='_blank'><font color='blue' size='3'> Create New Zero Wallet </font></a> .");
+                } else {
+                    if($_COOKIE['refer']){
+                        if(is_numeric($_COOKIE['refer'])){
+                            $referID2 = $mysqli->real_escape_string($_COOKIE['refer']);
+                            $AddressCheck = $mysqli->query("SELECT COUNT(id) FROM users WHERE id = '$referID2'")->fetch_row()[0];
+                            if($AddressCheck == 1){
+                                $referID = $referID2;
+                            } else {
+                                $referID = 0;
+                            }
                         } else {
                             $referID = 0;
                         }
                     } else {
                         $referID = 0;
                     }
-                } else {
-                    $referID = 0;
-                }
 
-                $AddressCheck = $mysqli->query("SELECT COUNT(id) FROM users WHERE LOWER(address) = '".strtolower($Address)."' LIMIT 1")->fetch_row()[0];
-                $timestamp = $mysqli->real_escape_string(time());
-                $ip = $mysqli->real_escape_string($realIpAddressUser);
+                    $AddressCheck = $mysqli->query("SELECT COUNT(id) FROM users WHERE LOWER(address) = '".strtolower($Address)."' LIMIT 1")->fetch_row()[0];
+                    $timestamp = $mysqli->real_escape_string(time());
+                    $ip = $mysqli->real_escape_string($realIpAddressUser);
 
-                if($AddressCheck == 1){
-                    $userID = $mysqli->query("SELECT id FROM users WHERE LOWER(address) = '".strtolower($Address)."' LIMIT 1")->fetch_assoc()['id'];
-                    $_SESSION['address'] = $userID;
-                    $mysqli->query("UPDATE users Set last_activity = '$timestamp', ip_address = '$ip' WHERE id = '$userID'");
+                    if($AddressCheck == 1){
+                        $userID = $mysqli->query("SELECT id FROM users WHERE LOWER(address) = '".strtolower($Address)."' LIMIT 1")->fetch_assoc()['id'];
+                        $_SESSION['address'] = $userID;
+                        $mysqli->query("UPDATE users Set last_activity = '$timestamp', ip_address = '$ip' WHERE id = '$userID'");
+                        header("Location: index.php?page=dashboard");
+                    } else {
+                        $mysqli->query("INSERT INTO users (address, ip_address, balance, joined, last_activity, referred_by, last_claim) VALUES ('$Address', '$ip', '0', '$timestamp', '$timestamp', '$referID', '0')");
+                        $_SESSION['address'] = $mysqli->insert_id;
+                    }
                     header("Location: index.php?page=dashboard");
-                } else {
-                    $mysqli->query("INSERT INTO users (address, ip_address, balance, joined, last_activity, referred_by, last_claim) VALUES ('$Address', '$ip', '0', '$timestamp', '$timestamp', '$referID', '0')");
-                    $_SESSION['address'] = $mysqli->insert_id;
+                    exit;
                 }
-                header("Location: index.php?page=dashboard");
-                exit;
             }
         } else {
             $alertForm = alert("danger", "The Zero address field can't be blank.");
